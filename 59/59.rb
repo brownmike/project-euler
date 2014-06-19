@@ -31,9 +31,33 @@
 require 'benchmark'
 
 class Euler59
-  def self.solve
-    # TODO
+  class << self
+    def solve
+      # a to z is 97 to 122 in ascii
+      keys = ((97..122).to_a * 3).combination(3).to_a
+      cipher = File.read('cipher1.txt').split(',').map(&:to_i)
+
+      # common english words from wikipedia with > 2 chars
+      common_words = %w[the and that have for not with you this but from they]
+
+      keys.each do |key|
+        candidate = decrypt(cipher,key)
+        word_count = 0
+        common_words.each do |word|
+          word_count += 1 if candidate.include?(word)
+          if word_count >= 3
+            puts candidate
+            return candidate.chars.map(&:ord).inject(:+)
+          end
+        end
+      end
+    end
+
+    def decrypt(msg, key)
+      length = key.length
+      msg.each_with_index.map { |c,i| c ^ key[i % length] }.map(&:chr).join
+    end
   end
 end
 
-# p Benchmark.measure { puts Euler59.solve }
+p Benchmark.measure { puts Euler59.solve }

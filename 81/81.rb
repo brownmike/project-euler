@@ -17,7 +17,7 @@
 
 require 'benchmark'
 
-#MATRIX = File.read('matrix.txt').split("\n").map { |row| row.split(',').map(&:to_i) }
+MATRIX = File.read('matrix.txt').split("\n").map { |row| row.split(',').map(&:to_i) }
 
 TEST = [
   [131,673,234,103,18],
@@ -76,10 +76,22 @@ class Matrix
   def calculate_min_row(top_row,bot_row)
     min_row = []
     if top_row.length < bot_row.length
-      # TODO
+      bot_row.each_with_index do |node,index|
+        case index
+        when 0
+          min_row << node + top_row.first
+        when bot_row.length - 1
+          min_row << node + top_row.last
+        else
+          min_row << [node + top_row[index-1],node + top_row[index]].min
+        end
+      end
     else
-      # TODO
+      bot_row.each_with_index do |node,index|
+        min_row << [node + top_row[index], node + top_row[index+1]].min
+      end
     end
+    min_row
   end
 
   def get_diagonal_row(start_row,start_col)
@@ -103,4 +115,4 @@ class Matrix
   end
 end
 
-#p Benchmark.measure { puts Euler81.solve(TEST) }
+p Benchmark.measure { puts Euler81.solve(MATRIX) }
